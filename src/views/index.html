@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <link rel="apple-touch-icon" href="/static/logo/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/static/logo/apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/logo/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/logo/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/static/logo/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/logo/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/logo/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/logo/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/logo/apple-touch-icon-180x180.png">
+
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" crossorigin="anonymous">
+    <script src="/static/bootstrap/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <title>Chatty</title>
+    <style>
+        #human-ask {
+            position: fixed;
+            bottom: 0rem;
+            width: 100%;
+            height: 7rem;
+            z-index: 999;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        #btn-ask {
+            position: absolute;
+            right: 0.5rem;
+            bottom: 0.5rem;
+            height: calc(30px + 1.6rem);
+            width: calc(30px + 1.6rem);
+            border-radius: calc(15px + 0.8rem);
+            border: none;
+        }
+
+        #question {
+            border-color: var(--bs-blue);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .card {
+            margin-bottom: 1rem;
+        }
+
+        .chat-answer {
+            white-space: pre-line;
+            /* white-space: pre-wrap; */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" style="padding-top: 1rem; padding-bottom:8rem;">
+        <div id="conversation">
+            <p class="font-monospace text-muted">
+                shift+enter或点击发送按钮提问。AI存在放弃思考可能，重新提问即可。
+            </p>
+            <p class="font-monospace text-muted">
+                使用了免费（暂时）的OpenAI接口，支持最多3条上下文联想。
+            </p>
+            <p class="font-monospace text-muted">
+                不定期更新，若遇到无法访问的情况，放心大胆滴@Jazzen。
+            </p>
+            <p class="font-monospace text-muted">
+                Coming soon： magic prompt guidance, and more...
+            </p>
+        </div>
+    </div>
+    <div id="human-ask">
+        <div class="container">
+            <div style="position:relative">
+                <textarea class="form-control form-control-outline-primary" id="question" rows="3"></textarea>
+                <button class="btn btn-outline-primary" type="button" id="btn-ask">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                        class="bi bi-send-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/jquery-3.6.4.min.js"></script>
+    <script type="module" src="/static/sse-fetch.js"></script>
+    <script type="module" src="/static/app.js"></script>
+</body>
+
+</html>
