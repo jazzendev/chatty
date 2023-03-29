@@ -2,6 +2,9 @@ import { sseFetch } from "./sse-fetch.js";
 
 let CONTEXTS = [];
 let ANSWERTEXT = [];
+let ANSWERDONE = true;
+let ANSWERERROR = false;
+let ANSWERTEXTDONE = true;
 
 function chat() {
     const thisbtn = $("#btn-ask");
@@ -48,11 +51,17 @@ function chat() {
 }
 
 function streamChat() {
+    if (!ANSWERDONE || !ANSWERTEXTDONE) {
+        return;
+    }
+
     const thisbtn = $("#btn-ask");
     const question = $("#question").val();
     const request = { "role": "user", "content": question };
     const newId = new Date().valueOf();
-    let message = "";
+    ANSWERDONE = false;
+    ANSWERERROR = false;
+    ANSWERTEXTDONE = false;
 
     $("#conversation").append(`
 <div class="card">
@@ -75,30 +84,27 @@ function streamChat() {
         },
         body: JSON.stringify(CONTEXTS),
         onmessage(msg) {
-            //let data = JSON.parse(msg.data);
-            // $(`#r-${newId}`).append(m.data);
-            // $(document).scrollTop($(document).height());
-            const content = JSON.parse(msg.data).content;
-            if (content) {
-                ANSWERTEXT.push({ id: newId, data: content });
+            if (msg.data === "[DONE]" || msg.data === "[ERROR]") {
+                ANSWERDONE = true;
+                return;
+            }
+            const data = JSON.parse(msg.data);
+            if (data.content) {
+                ANSWERTEXT.push({ id: newId, content: data.content });
             }
         },
         onerror(err) {
             $(`#r-${newId}`).append('<br/><span class="text-danger">AI放弃思考，请重新提问。</span>');
             $(`#r-${newId}`).attr('error', 'error');
             CONTEXTS.pop(); // remove last error question
+            ANSWERDONE = true;
+            ANSWERERROR = true;
         },
         onclose() {
-            thisbtn.prop("disabled", false);
             $(document).scrollTop($(document).height());
 
             if ($(`#r-${newId}`).attr('error') === 'error') {
                 return;
-            }
-
-            CONTEXTS.push({ "role": "assistant", "content": $(`#r-${newId}`).html() });
-            if (CONTEXTS.length >= 6) {
-                CONTEXTS.shift();
             }
         }
     });
@@ -106,10 +112,19 @@ function streamChat() {
 
 // to make text display a lit bit slower
 window.setInterval(function () {
+    if (ANSWERERROR) {
+        ANSWERTEXT.length = 0;
+    }
     if (ANSWERTEXT.length > 0) {
         const item = ANSWERTEXT.shift()
-        $(`#r-${item.id}`).append(item.data);
+        $(`#r-${item.id}`).append(item.content);
         $(document).scrollTop($(document).height());
+
+        if (ANSWERDONE && ANSWERTEXT.length === 0) {
+            CONTEXTS.push({ "role": "assistant", "content": $(`#r-${item.id}`).html() });
+            $("#btn-ask").prop("disabled", false);
+            ANSWERTEXTDONE = true;
+        }
     }
 }, 50);
 

@@ -31,12 +31,9 @@ app.post('/streaming', async (req: Request, res: Response) => {
   res.flushHeaders(); // flush the headers to establish SSE with client
 
   await streamMessage(req.body, (result) => {
-    //.log(result);
+    res.write(`data: ${result}\n\n`);
     if (result === "[DONE]" || result === "[ERROR]") {
       res.end();
-    }
-    else {
-      res.write(`data: ${result}\n\n`);
     }
   });
 });
